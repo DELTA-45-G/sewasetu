@@ -28,5 +28,17 @@ class PortalFixTests(unittest.TestCase):
         self.assertIn("admin_logged_in", approve)
         self.assertIn("admin_logged_in", reject)
 
+    def test_apply_validates_captcha(self):
+        import inspect
+        source = inspect.getsource(portal.apply)
+        self.assertIn("captcha_answer", source)
+        self.assertIn("Security check failed", source)
+
+    def test_upload_accepts_supported_documents(self):
+        import inspect
+        source = inspect.getsource(portal.upload)
+        self.assertIn(".jpg", source)
+        self.assertIn("5 * 1024 * 1024", source)
+
 if __name__ == "__main__":
     unittest.main()

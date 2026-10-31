@@ -135,7 +135,11 @@ def apply():
         return redirect(url_for("index"))
     if request.method == "POST":
         mobile = request.form.get("mobile", "").strip()
-        captcha = request.form.get("captcha", "")
+        captcha = request.form.get("captcha", "").strip()
+        expected = session.get("captcha_answer")
+        if expected is None or captcha != str(expected):
+            flash("Security check failed. Please try again.")
+            return render_template("apply.html", captcha_q=make_captcha())
         if len(mobile) != 10 or not mobile.isdigit():
             flash("Something went wrong. Please try again.")
             return render_template("apply.html", captcha_q=make_captcha())
@@ -215,11 +219,11 @@ def upload():
             return render_template("upload.html")
         filename = f.filename.lower()
         content = f.read()
-        if not filename.endswith(".pdf"):
-            flash("ERR_VAL_47")
+        if not filename.endswith((".pdf", ".jpg", ".jpeg")):
+            flash("Please upload a PDF, JPG, or JPEG document.")
             return render_template("upload.html")
-        if len(content) > 102400:
-            flash("ERR_VAL_47")
+        if len(content) > 5 * 1024 * 1024:
+            flash("Document exceeds the 5 MB maximum size.")
             return render_template("upload.html")
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         path = os.path.join(UPLOAD_DIR, "%s_%s" % (session["verified_mobile"], filename))
