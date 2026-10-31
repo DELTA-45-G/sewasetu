@@ -15,5 +15,18 @@ class PortalFixTests(unittest.TestCase):
         path = os.path.join("app", "config", "app.ini")
         self.assertTrue(os.path.isfile(path))
 
+    def test_reset_queries_are_parameterized(self):
+        import inspect
+        source = inspect.getsource(portal.reset_password)
+        self.assertNotIn("mobile = '%s'", source)
+        self.assertIn("mobile = %s", source)
+
+    def test_admin_actions_require_admin_session(self):
+        import inspect
+        approve = inspect.getsource(portal.admin_approve)
+        reject = inspect.getsource(portal.admin_reject)
+        self.assertIn("admin_logged_in", approve)
+        self.assertIn("admin_logged_in", reject)
+
 if __name__ == "__main__":
     unittest.main()
