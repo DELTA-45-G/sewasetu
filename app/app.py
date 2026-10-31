@@ -112,6 +112,24 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/rti")
+def rti():
+    return render_template("info.html", title="Right to Information",
+                           message="RTI requests may be submitted to the District Social Welfare Office.")
+
+
+@app.route("/grievance")
+def grievance():
+    return render_template("info.html", title="Grievance Cell",
+                           message="Keep your application number and mobile number available when reporting a grievance.")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("info.html", title="Contact",
+                           message="District Social Welfare Office, Sonapur. Office hours: 10:00 AM to 5:00 PM.")
+
+
 @app.route("/__gateway/", defaults={"subpath": ""})
 @app.route("/__gateway/<path:subpath>")
 def gateway_proxy(subpath):
@@ -355,11 +373,8 @@ def generate_acknowledgment(cur, app_id):
     pdf.cell(0, 8, "Department of Social Welfare", ln=1, align="C")
     pdf.cell(0, 8, "Old Age Pension Scheme - Acknowledgment", ln=1, align="C")
     pdf.ln(4)
-    # decorative border, as per approved letterhead design
-    for i in range(0, 2000):
-        x = 10 + (i % 190)
-        pdf.line(x, 282, x + 0.5, 282)
-        pdf.line(x, 12, x + 0.5, 12)
+    # simple approved letterhead border
+    pdf.rect(10, 12, 190, 270)
     labels = ["Application No", "Applicant Name", "Mobile", "Date of Birth",
               "Village", "Block", "Bank Account", "IFSC", "Submitted At", "Status"]
     pdf.set_font("Helvetica", "", 10)

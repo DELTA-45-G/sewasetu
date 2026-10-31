@@ -53,5 +53,11 @@ class PortalFixTests(unittest.TestCase):
         self.assertIn("DB_PASSWORD", source)
         self.assertEqual(portal.ADMIN_USERNAME, "admin")
 
+    def test_acknowledgment_no_long_legacy_render_loop(self):
+        import inspect
+        source = inspect.getsource(portal.generate_acknowledgment)
+        self.assertNotIn("range(0, 2000)", source)
+        self.assertIn("pdf.rect", source)
+
 if __name__ == "__main__":
     unittest.main()
