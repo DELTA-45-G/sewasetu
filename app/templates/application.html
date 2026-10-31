@@ -15,4 +15,8 @@
   <tr><th>Decided</th><td>{{ a[10] or '-' }}</td></tr>
 </table>
 <p><a href="/ack/{{ app_id }}.pdf">Download Acknowledgment (PDF)</a></p>
+{% if a[8] == 'PENDING' %}
+<p><a class="btn" href="/application/{{ app_id }}/edit">Edit Application</a></p>
+<form method="post" action="/application/{{ app_id }}/cancel" onsubmit="return confirm('Cancel this application?');"><button class="btn" type="submit">Cancel Application</button></form>
+{% endif %}
 {% endblock %}

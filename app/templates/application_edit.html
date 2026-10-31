@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Pending Application</h2>
+<form method="post">
+  <label>Full Name of Applicant</label><input type="text" name="applicant_name" value="{{ a[0] }}" maxlength="100" required>
+  <label>Village / Town</label><input type="text" name="village" value="{{ a[1] }}" maxlength="100" required>
+  <label>Block</label><select name="block" required>{% for b in blocks %}<option {% if a[2]==b %}selected{% endif %}>{{ b }}</option>{% endfor %}</select>
+  <label>Bank Account</label><input type="text" name="bank_account" value="{{ a[3] }}" maxlength="30" required>
+  <label>IFSC</label><input type="text" name="ifsc" value="{{ a[4] }}" maxlength="15" required>
+  <p><button class="btn" type="submit">Save Changes</button></p>
+</form>
+{% endblock %}

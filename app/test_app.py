@@ -40,5 +40,12 @@ class PortalFixTests(unittest.TestCase):
         self.assertIn(".jpg", source)
         self.assertIn("5 * 1024 * 1024", source)
 
+    def test_pending_application_can_be_edited_or_cancelled(self):
+        import inspect
+        edit_source = inspect.getsource(portal.edit_application)
+        cancel_source = inspect.getsource(portal.cancel_application)
+        self.assertIn("status='PENDING'", edit_source)
+        self.assertIn("status='PENDING'", cancel_source)
+
 if __name__ == "__main__":
     unittest.main()

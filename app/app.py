@@ -422,6 +422,56 @@ def view_application(app_id):
     return render_template("application.html", a=row, app_id=app_id)
 
 
+@app.route("/application/<int:app_id>/edit", methods=["GET", "POST"])
+def edit_application(app_id):
+    mobile = session.get("portal_mobile")
+    if not session.get("logged_in") or not mobile:
+        return redirect(url_for("status_login"))
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT applicant_name, village, block, bank_account, ifsc, status "
+                "FROM applications WHERE id = %s AND mobile = %s", (app_id, mobile))
+    row = cur.fetchone()
+    if not row:
+        cur.close(); conn.close()
+        abort(404)
+    if row[5] != "PENDING":
+        cur.close(); conn.close()
+        flash("Only pending applications can be edited.")
+        return redirect(url_for("view_application", app_id=app_id))
+    if request.method == "POST":
+        cur.execute("UPDATE applications SET applicant_name=%s, village=%s, block=%s, bank_account=%s, ifsc=%s "
+                    "WHERE id=%s AND mobile=%s AND status='PENDING'",
+                    (sanitize(request.form.get("applicant_name", ""), 100),
+                     sanitize(request.form.get("village", ""), 100),
+                     sanitize(request.form.get("block", ""), 50),
+                     sanitize(request.form.get("bank_account", ""), 30),
+                     sanitize(request.form.get("ifsc", ""), 15).upper(), app_id, mobile))
+        conn.commit()
+        cur.close(); conn.close()
+        flash("Application updated successfully.")
+        return redirect(url_for("view_application", app_id=app_id))
+    cur.close(); conn.close()
+    return render_template("application_edit.html", app_id=app_id, a=row, blocks=BLOCKS)
+
+
+@app.route("/application/<int:app_id>/cancel", methods=["POST"])
+def cancel_application(app_id):
+    mobile = session.get("portal_mobile")
+    if not session.get("logged_in") or not mobile:
+        abort(403)
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE applications SET status='CANCELLED', decided_at=%s, decided_by='CITIZEN' "
+                "WHERE id=%s AND mobile=%s AND status='PENDING'",
+                (datetime.now(), app_id, mobile))
+    updated = cur.rowcount
+    conn.commit()
+    cur.close(); conn.close()
+    flash("Application cancelled successfully." if updated else "The application could not be cancelled.")
+    return redirect(url_for("view_application", app_id=app_id))
+
+
 @app.route("/ack/<int:app_id>.pdf")
 def ack_pdf(app_id):
     mobile = session.get("portal_mobile")
