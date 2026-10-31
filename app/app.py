@@ -27,11 +27,13 @@ config = configparser.ConfigParser()
 config.read(os.path.join(BASE_DIR, "config", "app.ini"))
 
 app = Flask(__name__)
-app.secret_key = config.get("app", "secret_key")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", config.get("app", "secret_key"))
 app.config["PERMANENT_SESSION_LIFETIME"] = 300
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "sewasetu@123"
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "sewasetu@123")
 
 SMS_GATEWAY_URL = config.get("app", "sms_gateway_url")
 OTP_VALIDITY_SECONDS = config.getint("app", "otp_validity_seconds")

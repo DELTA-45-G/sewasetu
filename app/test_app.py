@@ -47,5 +47,11 @@ class PortalFixTests(unittest.TestCase):
         self.assertIn("status='PENDING'", edit_source)
         self.assertIn("status='PENDING'", cancel_source)
 
+    def test_admin_and_secret_support_environment_configuration(self):
+        import inspect
+        source = inspect.getsource(portal.get_db)
+        self.assertIn("DB_PASSWORD", source)
+        self.assertEqual(portal.ADMIN_USERNAME, "admin")
+
 if __name__ == "__main__":
     unittest.main()
