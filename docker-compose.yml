@@ -15,8 +15,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - smsgw
+      db:
+        condition: service_started
+      smsgw:
+        condition: service_started
     volumes:
       - uploads:/var/sewasetu/uploads
       - applogs:/var/log/sewasetu

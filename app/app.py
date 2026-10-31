@@ -57,11 +57,12 @@ except Exception:
 
 def get_db():
     return psycopg2.connect(
-        host=config.get("database", "host"),
-        port=config.get("database", "port"),
-        dbname=config.get("database", "name"),
-        user=config.get("database", "user"),
-        password=config.get("database", "password"),
+        host=os.getenv("DB_HOST", config.get("database", "host")),
+        port=int(os.getenv("DB_PORT", config.get("database", "port"))),
+        dbname=os.getenv("DB_NAME", config.get("database", "name")),
+        user=os.getenv("DB_USER", config.get("database", "user")),
+        password=os.getenv("DB_PASSWORD", config.get("database", "password")),
+        connect_timeout=5,
     )
 
 

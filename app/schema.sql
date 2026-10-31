@@ -35,3 +35,8 @@ CREATE TABLE IF NOT EXISTS otps (
     code       VARCHAR(6),
     created_at TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_applications_mobile ON applications(mobile);
+CREATE INDEX IF NOT EXISTS idx_applications_status_submitted ON applications(status, submitted_at);
+CREATE INDEX IF NOT EXISTS idx_applications_block_status ON applications(block, status);
+CREATE INDEX IF NOT EXISTS idx_otps_mobile_created ON otps(mobile, created_at DESC);
