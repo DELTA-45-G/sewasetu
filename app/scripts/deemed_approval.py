@@ -20,7 +20,7 @@ import requests
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 config = configparser.ConfigParser()
-CONFIG_PATH = os.path.join(BASE_DIR, "config", "settings.ini")
+CONFIG_PATH = os.path.join(BASE_DIR, "config", "app.ini")
 with open(CONFIG_PATH) as fh:
     config.read_file(fh)
 
@@ -30,11 +30,11 @@ SMS_GATEWAY_URL = config.get("app", "sms_gateway_url")
 
 def main():
     conn = psycopg2.connect(
-        host=config.get("database", "host"),
-        port=config.get("database", "port"),
-        dbname=config.get("database", "name"),
-        user=config.get("database", "user"),
-        password=config.get("database", "password"),
+        host=os.getenv("DB_HOST", config.get("database", "host")),
+        port=int(os.getenv("DB_PORT", config.get("database", "port"))),
+        dbname=os.getenv("DB_NAME", config.get("database", "name")),
+        user=os.getenv("DB_USER", config.get("database", "user")),
+        password=os.getenv("DB_PASSWORD", config.get("database", "password")),
     )
     cur = conn.cursor()
     cutoff = datetime.now() - timedelta(days=SLA_DAYS)

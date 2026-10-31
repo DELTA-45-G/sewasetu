@@ -10,5 +10,10 @@ class PortalFixTests(unittest.TestCase):
         name = "অসমীয়া জীৱন দাস"
         self.assertEqual(portal.sanitize(name), name)
 
+    def test_scheduler_config_exists(self):
+        import os
+        path = os.path.join("app", "config", "app.ini")
+        self.assertTrue(os.path.isfile(path))
+
 if __name__ == "__main__":
     unittest.main()
